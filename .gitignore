@@ -1,0 +1,6 @@
+#Cmake
+cmake-build-debug/*
+!build.ninja
+
+#clion
+.idea
