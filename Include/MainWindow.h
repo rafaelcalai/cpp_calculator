@@ -15,6 +15,7 @@ private:
     std::string op = "";
     bool res = false;
     bool has_operator = false;
+    bool num1_negative = false;
 
     Gtk::Entry result_display;
     Gtk::Button digit[10];

@@ -58,7 +58,10 @@ MainWindow::MainWindow()
 
 void MainWindow::digits_pressed(int digit_pressed)
 {
-    //TODO: check if result is on display
+    if(res)
+    {
+        MainWindow::clear();
+    }
 
     std::cout << digit_pressed << std::endl;
     std::cout << result_display.get_text_length() << std::endl;
@@ -71,7 +74,20 @@ void MainWindow::digits_pressed(int digit_pressed)
 void MainWindow::operation_pressed(char operation_pressed)
 {
     std::cout << operation_pressed << std::endl;
-    if(result_display.get_text_length() < 45 && !has_operator)
+    if(res)
+    {
+        MainWindow::clear();
+    }
+    if(result_display.get_text_length()  == 0 && operation_pressed == '-')
+    {
+        result_display.set_text(result_display.get_text() + operation_pressed);
+        num1_negative = true;
+    }
+    else if(result_display.get_text_length() == 1 && num1_negative)
+    {
+        return;
+    }
+    else if(result_display.get_text_length() > 0 && result_display.get_text_length() < 45 && !has_operator)
     {
         result_display.get_text_length() == 0 and operation_pressed == '-'? has_operator = false : has_operator = true ;
         result_display.set_text(result_display.get_text() + " " + operation_pressed + " ");
@@ -83,10 +99,61 @@ void MainWindow::clear()
     std::cout << "Clear" << std::endl;
     result_display.set_text("");
     has_operator = false;
+    num1_negative = false;
+    res = false;
 }
 
 void MainWindow::calculate()
 {
     std::cout << "Calc" << std::endl;
 
+    if((result_display.get_text_length() == 1 && num1_negative) || result_display.get_text_length() == 0)
+    {
+        result_display.set_text("Error, no value added");
+        res = true;
+        return;
+    }
+    std::string expression = result_display.get_text();
+    std::cout << expression<< std::endl;
+    std::vector <std::string>values;
+
+
+    if(!has_operator)
+    {
+        res = true;
+        return;
+    }
+    else
+    {
+        // Used to split string around spaces.
+        std::string word, display_result;
+        char operation_type;
+        std::istringstream ss(expression);
+        ss >> word;
+        num1 = stol(word);
+        ss >> operation_type;
+        ss >> word;
+        num2 = stol(word);
+
+        switch(operation_type)
+        {
+            case '+':
+                display_result = std::to_string(num1 + num2);
+                break;
+            case '-':
+                display_result = std::to_string(num1 - num2);
+                break;
+            case 'x':
+                display_result = std::to_string(num1 * num2);
+                break;
+            case '/':
+                display_result = std::to_string(num1 / num2);
+                break;
+            default:
+                result_display.set_text("Error, operation_type");
+                return;
+        }
+        result_display.set_text(display_result);
+        res = true;
+    }
 }
