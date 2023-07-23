@@ -4,7 +4,7 @@
 
 #ifndef CPP_CALCULATOR_MAINWINDOW_H
 #define CPP_CALCULATOR_MAINWINDOW_H
-
+#include <iostream>
 #include<gtkmm-3.0/gtkmm.h>
 
 using namespace Gtk;
@@ -14,6 +14,7 @@ private:
     long num1 = -1,  num2 = -1;
     std::string op = "";
     bool res = false;
+    bool has_operator = false;
 
     Gtk::Entry result_display;
     Gtk::Button digit[10];
@@ -22,7 +23,8 @@ private:
     Gtk::Button clr;
 
     void digits_pressed(int digit);
-    void operation_pressed(int operation);
+    void operation_pressed(char operation);
+    void calculate();
     void clear();
 
 public:

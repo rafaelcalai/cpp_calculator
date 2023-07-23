@@ -4,7 +4,8 @@
 
 #include "../Include/MainWindow.h"
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow()
+{
     set_size_request(500,700);
     set_position(WIN_POS_CENTER);
     set_resizable(false);
@@ -24,22 +25,30 @@ MainWindow::MainWindow() {
     for(int i = 9; i > 0; i--)
     {
         digit[i].set_label(std::to_string(i));
+        digit[i].signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(this, &MainWindow::digits_pressed), i));
         grid.attach(digit[i], column[i%3] , 3-((i-1)/3), 1, 1);
     }
     digit[0].set_label("0");
+    digit[0].signal_clicked().connect(sigc::bind<int>(sigc::mem_fun(this, &MainWindow::digits_pressed), 0));
     grid.attach(digit[0], 0, 4, 3, 1);
 
     operation[0].set_label("/");
     operation[1].set_label("x");
     operation[2].set_label("-");
     operation[3].set_label("+");
+    operation[0].signal_clicked().connect(sigc::bind<const char>(sigc::mem_fun(this, &MainWindow::operation_pressed), '/'));
+    operation[1].signal_clicked().connect(sigc::bind<const char>(sigc::mem_fun(this, &MainWindow::operation_pressed), 'x'));
+    operation[2].signal_clicked().connect(sigc::bind<const char>(sigc::mem_fun(this, &MainWindow::operation_pressed), '-'));
+    operation[3].signal_clicked().connect(sigc::bind<const char>(sigc::mem_fun(this, &MainWindow::operation_pressed), '+'));
     grid.attach(operation[0], 3, 1, 1, 1);
     grid.attach(operation[1], 3, 2, 1, 1);
     grid.attach(operation[2], 3, 3, 1, 1);
     grid.attach(operation[3], 3, 4, 1, 1);
 
     clr.set_label("Clr");
+    clr.signal_clicked().connect(sigc::mem_fun(this, &MainWindow::clear));
     equal.set_label("=");
+    equal.signal_clicked().connect(sigc::mem_fun(this, &MainWindow::calculate));
     grid.attach(clr, 4, 1, 1, 1);
     grid.attach(equal, 4, 2, 1, 3);
 
@@ -47,14 +56,37 @@ MainWindow::MainWindow() {
     show_all_children();
 }
 
-void MainWindow::digits_pressed(int digit) {
+void MainWindow::digits_pressed(int digit_pressed)
+{
+    //TODO: check if result is on display
 
+    std::cout << digit_pressed << std::endl;
+    std::cout << result_display.get_text_length() << std::endl;
+    if(result_display.get_text_length() < 45)
+    {
+        result_display.set_text(result_display.get_text() + std::to_string(digit_pressed));
+    }
 }
 
-void MainWindow::operation_pressed(int operation) {
-
+void MainWindow::operation_pressed(char operation_pressed)
+{
+    std::cout << operation_pressed << std::endl;
+    if(result_display.get_text_length() < 45 && !has_operator)
+    {
+        result_display.get_text_length() == 0 and operation_pressed == '-'? has_operator = false : has_operator = true ;
+        result_display.set_text(result_display.get_text() + " " + operation_pressed + " ");
+    }
 }
 
-void MainWindow::clear() {
+void MainWindow::clear()
+{
+    std::cout << "Clear" << std::endl;
+    result_display.set_text("");
+    has_operator = false;
+}
+
+void MainWindow::calculate()
+{
+    std::cout << "Calc" << std::endl;
 
 }
